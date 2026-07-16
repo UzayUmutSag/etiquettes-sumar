@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Marque {
+  id      String   @id @default(cuid())
+  nom     String   @unique
+  modeles Modele[]
+  creeLe  DateTime @default(now())
+}
+
+model Modele {
+  id       String   @id @default(cuid())
+  nom      String
+  marqueId String
+  marque   Marque   @relation(fields: [marqueId], references: [id], onDelete: Cascade)
+  creeLe   DateTime @default(now())
+
+  @@unique([nom, marqueId])
+}
+
+model EtiquetteAtelier {
+  id                 String            @id @default(cuid())
+  notionCommandeId   String
+  numeroCommande     String
+  numeroDevis        String?
+  client             String
+  dateReception      DateTime?
+  dateLivraison      DateTime?
+  avancement         String?
+  marque             String?
+  reference          String?
+  clientFinal        String?
+  refClient          String?
+  nbCarreaux         Int?
+  dimOriginale       String?
+  dimFaconnage       String?
+  finition           String?
+  quantite           Int?
+  observation        String?
+  creeLe             DateTime          @default(now())
+  nbImpressions      Int               @default(0)
+  derniereImpression DateTime?
+  etiquettesClient   EtiquetteClient[]
+}
+
+model EtiquetteClient {
+  id                 String           @id @default(cuid())
+  etiquetteAtelierId String
+  etiquetteAtelier   EtiquetteAtelier @relation(fields: [etiquetteAtelierId], references: [id], onDelete: Cascade)
+  dateProduction     DateTime?
+  lignes             String
+  nbEtiquettes       Int
+  creeLe             DateTime         @default(now())
+}
