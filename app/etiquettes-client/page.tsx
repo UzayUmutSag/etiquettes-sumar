@@ -19,6 +19,7 @@ type EtiquetteAtelier = {
   nbCarreaux: number | null;
   dimOriginale: string | null;
   dimFaconnage: string | null;
+  typeProduit: string | null;
   finition: string | null;
   quantite: number | null;
   observation: string | null;
@@ -141,7 +142,7 @@ export default function EtiqettesClientPage() {
     const modeleVal = up(sel.reference);
     const dimOrigVal = up(sel.dimOriginale);
     const dimFaçVal = up(sel.dimFaconnage);
-    const finitionVal = up(sel.finition);
+    const finitionVal = [sel.typeProduit, sel.finition].filter(Boolean).map(s => s!.toUpperCase()).join(" · ") || "—";
     const refClientVal = sel.refClient ? `Réf : ${up(sel.refClient)}` : "";
     const devisVal = sel.numeroDevis || "";
     const dateVal = dateProduction ? `Prod. : ${fmtDate(dateProduction)}` : "";
@@ -430,7 +431,11 @@ export default function EtiqettesClientPage() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "14px 24px", marginBottom: 16 }}>
                     <InfoField label="Marque" value={sel.marque || "—"} />
                     <InfoField label="Modèle" value={sel.reference || "—"} />
-                    <InfoField label="Finition" value={sel.finition || "—"} />
+                    <InfoField label="Type" value={sel.typeProduit || "—"} />
+                  </div>
+                  {/* Ligne 3b : finitions */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "14px 24px", marginBottom: 16 }}>
+                    <InfoField label="Finitions" value={sel.finition || "—"} />
                   </div>
                   {/* Ligne 4 : dimensions + qté */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "14px 24px" }}>

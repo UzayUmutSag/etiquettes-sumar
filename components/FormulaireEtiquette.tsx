@@ -4,7 +4,7 @@ import ComboboxField, { ComboOption } from "./ComboboxField";
 
 type FormData = {
   marque: string; reference: string; refClient: string; clientFinal: string; nbCarreaux: string;
-  dimOriginale: string; dimFaconnage: string; finition: string; quantite: string; observation: string;
+  dimOriginale: string; dimFaconnage: string; typeProduit: string; finition: string; quantite: string; observation: string;
 };
 
 type Props = {
@@ -40,7 +40,7 @@ const AUTRES_GROUPES = [
     ],
   },
   {
-    titre: "Dimensions & Finition",
+    titre: "Dimensions",
     icon: (
       <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
@@ -49,7 +49,6 @@ const AUTRES_GROUPES = [
     champs: [
       { label: "Dimension originale", field: "dimOriginale" as keyof FormData, placeholder: "ex: 600 × 600 mm" },
       { label: "Dimension après façonnage", field: "dimFaconnage" as keyof FormData, placeholder: "ex: 595 × 595 mm" },
-      { label: "Finition", field: "finition" as keyof FormData, placeholder: "ex: Poli, Brossé, Mat…", col2: true },
     ],
   },
 ];
@@ -60,15 +59,26 @@ const inputStyle: React.CSSProperties = {
   background: "#FAFAFA", transition: "border-color 0.15s", boxSizing: "border-box",
 };
 
+type TypeOpt = { id: string; nom: string };
+
 export default function FormulaireEtiquette({ formData, onChange, onGenerer }: Props) {
   const [marques, setMarques] = useState<ComboOption[]>([]);
   const [modeles, setModeles] = useState<ComboOption[]>([]);
   const [selectedMarqueId, setSelectedMarqueId] = useState<string | null>(null);
 
+  const [types, setTypes] = useState<TypeOpt[]>([]);
+  const [finitionsDisponibles, setFinitionsDisponibles] = useState<TypeOpt[]>([]);
+  const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
+  const [finitionsChoisies, setFinitionsChoisies] = useState<string[]>([]);
+
   useEffect(() => {
     fetch("/api/referentiel/marques")
       .then((r) => r.json())
       .then((data) => Array.isArray(data) && setMarques(data))
+      .catch(() => {});
+    fetch("/api/referentiel/types")
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) && setTypes(data))
       .catch(() => {});
   }, []);
 
@@ -91,6 +101,29 @@ export default function FormulaireEtiquette({ formData, onChange, onGenerer }: P
       [...prev.filter((m) => m.id !== created.id), created].sort((a, b) => a.nom.localeCompare(b.nom))
     );
     return created;
+  };
+
+  useEffect(() => {
+    if (!selectedTypeId) { setFinitionsDisponibles([]); return; }
+    fetch(`/api/referentiel/finitions?typeId=${selectedTypeId}`)
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) && setFinitionsDisponibles(data))
+      .catch(() => {});
+  }, [selectedTypeId]);
+
+  const handleTypeChange = (typeId: string, typeNom: string) => {
+    setSelectedTypeId(typeId);
+    setFinitionsChoisies([]);
+    onChange("typeProduit", typeNom);
+    onChange("finition", "");
+  };
+
+  const toggleFinition = (nom: string) => {
+    const updated = finitionsChoisies.includes(nom)
+      ? finitionsChoisies.filter((f) => f !== nom)
+      : [...finitionsChoisies, nom];
+    setFinitionsChoisies(updated);
+    onChange("finition", updated.join(", "));
   };
 
   const handleMarqueSelect = (opt: ComboOption | null) => {
@@ -190,6 +223,68 @@ export default function FormulaireEtiquette({ formData, onChange, onGenerer }: P
             </div>
           </div>
         ))}
+
+        {/* Type & Finitions */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, color: "#475569" }}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span style={{ fontSize: 12, fontWeight: 600 }}>Type & Finitions</span>
+          </div>
+
+          {/* Sélecteur de type */}
+          <div style={{ marginBottom: 10 }}>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748B", marginBottom: 5, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+              Type
+            </label>
+            <select
+              value={selectedTypeId ?? ""}
+              onChange={(e) => {
+                const opt = types.find((t) => t.id === e.target.value);
+                if (opt) handleTypeChange(opt.id, opt.nom);
+                else { setSelectedTypeId(null); setFinitionsChoisies([]); onChange("typeProduit", ""); onChange("finition", ""); }
+              }}
+              style={{ ...inputStyle, cursor: "pointer", appearance: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2394A3B8' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center", paddingRight: 30 }}
+            >
+              <option value="">— Choisir un type —</option>
+              {types.map((t) => (
+                <option key={t.id} value={t.id}>{t.nom}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Cases à cocher des finitions */}
+          {selectedTypeId && (
+            <div>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748B", marginBottom: 8, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                Finitions
+              </label>
+              {finitionsDisponibles.length === 0 ? (
+                <div style={{ fontSize: 12, color: "#94A3B8", fontStyle: "italic" }}>Aucune finition pour ce type</div>
+              ) : (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
+                  {finitionsDisponibles.map((f) => {
+                    const checked = finitionsChoisies.includes(f.nom);
+                    return (
+                      <label key={f.id} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", userSelect: "none" }}>
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleFinition(f.nom)}
+                          style={{ width: 15, height: 15, accentColor: "#2563EB", cursor: "pointer" }}
+                        />
+                        <span style={{ fontSize: 13, fontWeight: checked ? 600 : 400, color: checked ? "#1D4ED8" : "#475569" }}>
+                          {f.nom}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Observation */}
         <div style={{ marginBottom: 20 }}>

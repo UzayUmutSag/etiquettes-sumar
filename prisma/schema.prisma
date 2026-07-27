@@ -24,6 +24,23 @@ model Modele {
   @@unique([nom, marqueId])
 }
 
+model TypeProduit {
+  id        String              @id @default(cuid())
+  nom       String              @unique
+  finitions FinitionProduit[]
+  creeLe    DateTime            @default(now())
+}
+
+model FinitionProduit {
+  id     String        @id @default(cuid())
+  nom    String
+  typeId String
+  type   TypeProduit @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  creeLe DateTime      @default(now())
+
+  @@unique([nom, typeId])
+}
+
 model EtiquetteAtelier {
   id                 String            @id @default(cuid())
   notionCommandeId   String
@@ -40,6 +57,7 @@ model EtiquetteAtelier {
   nbCarreaux         Int?
   dimOriginale       String?
   dimFaconnage       String?
+  typeProduit        String?
   finition           String?
   quantite           Int?
   observation        String?
@@ -47,6 +65,13 @@ model EtiquetteAtelier {
   nbImpressions      Int               @default(0)
   derniereImpression DateTime?
   etiquettesClient   EtiquetteClient[]
+}
+
+model ClientLogo {
+  id        String   @id @default(cuid())
+  nomClient String   @unique
+  logoData  String?
+  creeLe    DateTime @default(now())
 }
 
 model EtiquetteClient {

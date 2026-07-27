@@ -12,6 +12,7 @@ type EtiquetteData = {
   nbCarreaux: string;
   dimOriginale: string;
   dimFaconnage: string;
+  typeProduit: string;
   finition: string;
   quantite: string;
   observation: string;
@@ -84,16 +85,19 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
 
       {/* EN-TÊTE */}
       <div style={{ padding: `${px(1.5)} ${px(2.5)} ${px(1)}`, borderBottom: B2 }}>
-        <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(6),
+        <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(4.5),
           lineHeight: 1.05, textTransform: "uppercase" }}>
           {data.client || "—"}
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: px(2), marginTop: px(0.5) }}>
-          <span style={{ fontFamily: fontMain, fontWeight: 700, fontSize: px(4) }}>{data.numeroCommande || "—"}</span>
-          <span style={{ fontSize: px(3) }}>{data.numeroDevis || ""}</span>
+        <div style={{ display: "flex", alignItems: "baseline", gap: px(1), marginTop: px(0.5) }}>
+          <span style={{ fontSize: px(3), fontWeight: 700 }}>{data.numeroCommande || "—"}</span>
+          {data.numeroDevis && <>
+            <span style={{ fontSize: px(3) }}>-</span>
+            <span style={{ fontSize: px(3), fontWeight: 700 }}>{data.numeroDevis}</span>
+          </>}
         </div>
         <div style={{ fontSize: px(2.6), marginTop: px(0.3) }}>
-          Client final : {(data.clientFinal || "—").toUpperCase()} · Réf. : {(data.refClient || "—").toUpperCase()}
+          Client final : {(data.clientFinal || "—").toUpperCase()} · Référence Client : {(data.refClient || "—").toUpperCase()}
         </div>
       </div>
 
@@ -101,7 +105,7 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
       <div style={{ borderBottom: B2, padding: `${px(1)} ${px(2)}`, textAlign: "center" }}>
         <div style={{ fontWeight: 700, fontSize: px(2.5), letterSpacing: "0.12em",
           textTransform: "uppercase", marginBottom: px(0.3) }}>Livraison planifiée le</div>
-        <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(9.5),
+        <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(7.5),
           letterSpacing: "-0.02em", lineHeight: 1 }}>
           {data.dateLivraison
             ? new Date(data.dateLivraison).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
@@ -114,8 +118,8 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
 
         <Row label="MARQUE" value={(data.marque || "—").toUpperCase()} px={px} B={B} fontMain={fontMain} />
         <Row label="RÉFÉRENCE" value={(data.reference || "—").toUpperCase()} px={px} B={B} fontMain={fontMain} />
-        <Row label={<>NB CARREAUX<br />FOURNIS</>} value={data.nbCarreaux ? `${data.nbCarreaux} carreaux` : "—"} px={px} B={B} fontMain={fontMain} />
-        <Row label={<>QTÉ À<br />PRODUIRE</>} value={data.quantite ? `${data.quantite} U` : "—"} px={px} B={B} fontMain={fontMain} />
+        <Row label="CARREAUX FOURNIS" value={data.nbCarreaux ? `${data.nbCarreaux} carreaux` : "—"} px={px} B={B} fontMain={fontMain} />
+        <Row label="QTÉ À PRO" value={data.quantite ? `${data.quantite} U` : "—"} px={px} B={B} fontMain={fontMain} />
 
         {/* Dimensions */}
         <div style={{ display: "flex", borderBottom: B, height: px(15) }}>
@@ -123,7 +127,7 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
             justifyContent: "center", borderRight: B, padding: `${px(2)} ${px(1.5)}` }}>
             <div style={{ fontSize: px(2.3), fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase", marginBottom: px(0.3) }}>Origine</div>
-            <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(5.5) }}>
+            <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(4.5) }}>
               {(data.dimOriginale || "—").toUpperCase()}
             </div>
           </div>
@@ -133,13 +137,33 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
             justifyContent: "center", borderLeft: B, padding: `${px(2)} ${px(1.5)}` }}>
             <div style={{ fontSize: px(2.3), fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase", marginBottom: px(0.3) }}>Après façonnage</div>
-            <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(5.5) }}>
+            <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(4.5) }}>
               {(data.dimFaconnage || "—").toUpperCase()}
             </div>
           </div>
         </div>
 
-        <Row label="FINITION" value={(data.finition || "—").toUpperCase()} px={px} B={B} fontMain={fontMain} />
+        {/* Finition avec badges encadrés */}
+        <div style={{ display: "flex", borderBottom: B, minHeight: px(9) }}>
+          <div style={{ width: px(20), borderRight: B, padding: `${px(1)} ${px(1.5)}`, display: "flex", alignItems: "center" }}>
+            <span style={{ fontSize: px(2.3), fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", lineHeight: 1.25 }}>FINITION</span>
+          </div>
+          <div style={{ flex: 1, padding: `${px(0.8)} ${px(1.5)}`, display: "flex", flexWrap: "wrap", alignContent: "center", gap: px(0.8) }}>
+            {data.typeProduit && (
+              <span style={{ border: `1.5px solid #000`, padding: `${px(0.4)} ${px(1.2)}`, fontSize: px(4), fontWeight: 700, lineHeight: 1.3, whiteSpace: "nowrap" }}>
+                {data.typeProduit.toUpperCase()}
+              </span>
+            )}
+            {data.finition && data.finition.split(", ").filter(Boolean).map((f, i) => (
+              <span key={i} style={{ border: `1.5px solid #000`, padding: `${px(0.4)} ${px(1.2)}`, fontSize: px(4), fontWeight: 700, lineHeight: 1.3, whiteSpace: "nowrap" }}>
+                {f.toUpperCase()}
+              </span>
+            ))}
+            {!data.typeProduit && !data.finition && (
+              <span style={{ fontSize: px(4.2), fontFamily: fontMain, fontWeight: 700 }}>—</span>
+            )}
+          </div>
+        </div>
 
         {/* Observations */}
         {data.observation && (
@@ -172,7 +196,7 @@ function Row({ label, value, px, B, fontMain }: {
           textTransform: "uppercase", lineHeight: 1.25 }}>{label}</span>
       </div>
       <div style={{ flex: 1, padding: `${px(0.8)} ${px(1.5)}`, display: "flex", alignItems: "center" }}>
-        <span style={{ fontFamily: fontMain, fontWeight: 700, fontSize: px(4.2) }}>{value}</span>
+        <span style={{ fontFamily: fontMain, fontWeight: 700, fontSize: px(4) }}>{value}</span>
       </div>
     </div>
   );

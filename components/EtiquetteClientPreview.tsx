@@ -12,6 +12,7 @@ export type EtiquetteClientData = {
   reference: string | null;
   dimOriginale: string | null;
   dimFaconnage: string | null;
+  typeProduit: string | null;
   finition: string | null;
   quantite: number | null;
 };
@@ -98,21 +99,21 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
           }}>
             <FitText
               text={up(data.client)}
-              maxPx={pxNum(7)}
-              minPx={pxNum(2.5)}
+              maxPx={pxNum(4.5)}
+              minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 900, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
             />
           </div>
           <div style={{
-            flex: 2, display: "flex", flexDirection: "column",
+            flex: 1, display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center",
             padding: `${px(1)} ${px(1)}`, overflow: "hidden",
           }}>
             <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(8), lineHeight: 1 }}>
-              {qte != null ? `${qte} U` : "—"}
+              {qte != null ? `${qte}` : "—"}
             </div>
-            <div style={{ fontSize: px(2.2), color: "#555", marginTop: px(0.4) }}>/ carton</div>
+            <div style={{ fontSize: px(2.2), color: "#555", marginTop: px(0.4) }}>unités</div>
           </div>
         </div>
 
@@ -126,14 +127,14 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
             <SecLabel>Marque / Référence</SecLabel>
             <FitText
               text={up(data.marque)}
-              maxPx={pxNum(4.5)}
+              maxPx={pxNum(4)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 900, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
             />
             <FitText
               text={up(data.reference)}
-              maxPx={pxNum(2.3)}
+              maxPx={pxNum(3)}
               minPx={pxNum(1.5)}
               style={{ fontWeight: 400, textTransform: "uppercase", marginTop: px(0.2), lineHeight: 1.2 }}
             />
@@ -146,10 +147,10 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
             <SecLabel>Format Origine</SecLabel>
             <FitText
               text={up(data.dimOriginale)}
-              maxPx={pxNum(4.5)}
+              maxPx={pxNum(4)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 900, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
             />
           </div>
         </div>
@@ -183,17 +184,19 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
             <SecLabel>Façonnage · Finition</SecLabel>
             <FitText
               text={up(data.dimFaconnage)}
-              maxPx={pxNum(4.3)}
+              maxPx={pxNum(4)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 900, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
             />
-            <FitText
-              text={up(data.finition)}
-              maxPx={pxNum(2.3)}
-              minPx={pxNum(1.5)}
-              style={{ fontWeight: 400, textTransform: "uppercase", marginTop: px(0.2), lineHeight: 1.2 }}
-            />
+            {(data.typeProduit || data.finition) && (
+              <FitText
+                text={[data.typeProduit, data.finition].filter(Boolean).map(s => s!.toUpperCase()).join(" · ")}
+                maxPx={pxNum(3)}
+                minPx={pxNum(1.5)}
+                style={{ fontWeight: 700, textTransform: "uppercase", marginTop: px(0.2), lineHeight: 1.2 }}
+              />
+            )}
             {dateProduction && (
               <div style={{ fontSize: px(2.1), color: "#444", marginTop: px(0.3), lineHeight: 1.2, overflow: "hidden" }}>
                 Prod. : {fmtDateProd(dateProduction)}
@@ -205,15 +208,18 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
         {/* ── FOOTER : N° Commande + N° Devis ── */}
         <div style={{
           padding: `${px(0.6)} ${px(1.5)}`, flexShrink: 0,
-          display: "flex", alignItems: "center", gap: px(2), overflow: "hidden",
+          display: "flex", alignItems: "center", gap: px(1), overflow: "hidden",
         }}>
-          <span style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(3.8), lineHeight: 1 }}>
+          <span style={{ fontFamily: fontBody, fontWeight: 400, fontSize: px(2.5), lineHeight: 1 }}>
             {data.numeroCommande || "—"}
           </span>
           {data.numeroDevis && (
-            <span style={{ fontSize: px(2.4), color: "#555", fontWeight: 600 }}>
-              {data.numeroDevis}
-            </span>
+            <>
+              <span style={{ fontSize: px(2.5), fontWeight: 400 }}>-</span>
+              <span style={{ fontSize: px(2.5), fontWeight: 400 }}>
+                {data.numeroDevis}
+              </span>
+            </>
           )}
         </div>
 

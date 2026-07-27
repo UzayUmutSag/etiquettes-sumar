@@ -24,6 +24,7 @@ type FormData = {
   nbCarreaux: string;
   dimOriginale: string;
   dimFaconnage: string;
+  typeProduit: string;
   finition: string;
   quantite: string;
   observation: string;
@@ -31,7 +32,7 @@ type FormData = {
 
 const FORM_VIDE: FormData = {
   marque: "", reference: "", refClient: "", clientFinal: "", nbCarreaux: "",
-  dimOriginale: "", dimFaconnage: "", finition: "", quantite: "", observation: "",
+  dimOriginale: "", dimFaconnage: "", typeProduit: "", finition: "", quantite: "", observation: "",
 };
 
 const STATUT_STYLE: Record<string, { bg: string; text: string; dot: string }> = {
@@ -108,7 +109,7 @@ export default function Home() {
         refClient: formData.refClient || null,
         nbCarreaux: formData.nbCarreaux ? parseInt(formData.nbCarreaux) : null,
         dimOriginale: formData.dimOriginale || null, dimFaconnage: formData.dimFaconnage || null,
-        finition: formData.finition || null,
+        typeProduit: formData.typeProduit || null, finition: formData.finition || null,
         quantite: formData.quantite ? parseInt(formData.quantite) : null,
         observation: formData.observation || null,
       }),
@@ -129,22 +130,26 @@ export default function Home() {
         body { width: 75mm; height: 125mm; font-family: ${fontBody}; color: #000; background: white; }
         .wrap { width: 75mm; height: 125mm; border: 2px solid #000; display: flex; flex-direction: column; overflow: hidden; }
         .header { padding: 1.5mm 2.5mm 1mm; border-bottom: 2px solid #000; }
-        .client-name { font-family: ${fontMain}; font-weight: 900; font-size: 6mm; line-height: 1.05; text-transform: uppercase; }
+        .client-name { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; line-height: 1.05; text-transform: uppercase; }
         .cmd-line { display: flex; align-items: baseline; gap: 2mm; margin-top: 0.5mm; }
-        .cmd { font-family: ${fontMain}; font-weight: 700; font-size: 4mm; }
+        .cmd { font-size: 3mm; font-weight: 700; }
         .devis { font-size: 3mm; }
         .client-final { font-size: 2.6mm; margin-top: 0.3mm; }
         .date-block { border-bottom: 2px solid #000; padding: 1mm 2mm; text-align: center; }
         .date-label { font-weight: 700; font-size: 2.5mm; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3mm; }
-        .date-val { font-family: ${fontMain}; font-weight: 900; font-size: 9.5mm; letter-spacing: -0.02em; line-height: 1; }
+        .date-val { font-family: ${fontMain}; font-weight: 900; font-size: 7.5mm; letter-spacing: -0.02em; line-height: 1; }
         .table { flex: 1; display: flex; flex-direction: column; border-bottom: 2px solid #000; }
         .row { display: flex; border-bottom: 1.5px solid #000; height: 9mm; }
         .row-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; display: flex; align-items: center; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
-        .row-val { flex: 1; padding: 0.8mm 1.5mm; display: flex; align-items: center; font-family: ${fontMain}; font-weight: 700; font-size: 4.2mm; }
+        .row-val { flex: 1; padding: 0.8mm 1.5mm; display: flex; align-items: center; font-family: ${fontMain}; font-weight: 700; font-size: 4mm; }
+        .fin-row { display: flex; border-bottom: 1.5px solid #000; min-height: 9mm; }
+        .fin-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; display: flex; align-items: center; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
+        .fin-tags { flex: 1; padding: 0.8mm 1.5mm; display: flex; flex-wrap: wrap; align-content: center; gap: 0.8mm; }
+        .fin-tag { border: 1.5px solid #000; padding: 0.4mm 1.2mm; font-size: 4mm; font-weight: 700; line-height: 1.3; white-space: nowrap; }
         .dim-row { display: flex; border-bottom: 1.5px solid #000; height: 15mm; }
         .dim-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2mm 1.5mm; }
         .dim-cell-label { font-size: 2.3mm; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3mm; }
-        .dim-cell-val { font-family: ${fontMain}; font-weight: 900; font-size: 5.5mm; }
+        .dim-cell-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; }
         .dim-sep { display: flex; align-items: center; padding: 0 1mm; font-family: ${fontMain}; font-weight: 900; font-size: 6mm; }
         .obs-row { display: flex; flex: 1; }
         .obs-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; word-break: break-word; }
@@ -155,10 +160,9 @@ export default function Home() {
         <div class="header">
           <div class="client-name">${etiquette.client || "—"}</div>
           <div class="cmd-line">
-            <span class="cmd">${etiquette.numeroCommande || "—"}</span>
-            <span class="devis">${etiquette.numeroDevis || ""}</span>
+            <span class="cmd">${etiquette.numeroCommande || "—"}${etiquette.numeroDevis ? ` - ${etiquette.numeroDevis}` : ""}</span>
           </div>
-          <div class="client-final">Client final : ${up(etiquette.clientFinal)} · Réf. : ${up(etiquette.refClient)}</div>
+          <div class="client-final">Client final : ${up(etiquette.clientFinal)} · Référence Client : ${up(etiquette.refClient)}</div>
         </div>
         <div class="date-block">
           <div class="date-label">Livraison planifiée le</div>
@@ -167,8 +171,8 @@ export default function Home() {
         <div class="table">
           <div class="row"><div class="row-label">Marque</div><div class="row-val">${up(etiquette.marque)}</div></div>
           <div class="row"><div class="row-label">Référence</div><div class="row-val">${up(etiquette.reference)}</div></div>
-          <div class="row"><div class="row-label">NB Carreaux<br/>fournis</div><div class="row-val">${etiquette.nbCarreaux ? etiquette.nbCarreaux + " carreaux" : "—"}</div></div>
-          <div class="row"><div class="row-label">QTÉ À<br/>produire</div><div class="row-val">${etiquette.quantite ? etiquette.quantite + " U" : "—"}</div></div>
+          <div class="row"><div class="row-label">CARREAUX FOURNIS</div><div class="row-val">${etiquette.nbCarreaux ? etiquette.nbCarreaux + " carreaux" : "—"}</div></div>
+          <div class="row"><div class="row-label">QTÉ À PRO</div><div class="row-val">${etiquette.quantite ? etiquette.quantite + " U" : "—"}</div></div>
           <div class="dim-row">
             <div class="dim-cell" style="border-right:1.5px solid #000">
               <div class="dim-cell-label">Origine</div>
@@ -180,7 +184,14 @@ export default function Home() {
               <div class="dim-cell-val">${up(etiquette.dimFaconnage)}</div>
             </div>
           </div>
-          <div class="row"><div class="row-label">Finition</div><div class="row-val">${up(etiquette.finition)}</div></div>
+          <div class="fin-row">
+            <div class="fin-label">Finition</div>
+            <div class="fin-tags">
+              ${etiquette.typeProduit ? `<span class="fin-tag fin-tag-type">${up(etiquette.typeProduit)}</span>` : ""}
+              ${etiquette.finition ? etiquette.finition.split(", ").filter(Boolean).map((f: string) => `<span class="fin-tag">${f.toUpperCase()}</span>`).join("") : ""}
+              ${!etiquette.typeProduit && !etiquette.finition ? `<span style="font-family:${fontMain};font-weight:700;font-size:4mm">—</span>` : ""}
+            </div>
+          </div>
           ${etiquette.observation ? `<div class="obs-row">
             <div class="obs-label">OBS</div>
             <div class="obs-val">${etiquette.observation}</div>
