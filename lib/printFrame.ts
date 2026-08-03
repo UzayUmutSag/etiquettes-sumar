@@ -7,10 +7,10 @@ export function printViaIframe(html: string, pageWidth: string, pageHeight: stri
   style.textContent = `
     @media print {
       @page { size: ${pageWidth} ${pageHeight}; margin: 0; }
-      html, body { margin: 0 !important; padding: 0 !important; }
-      body > * { display: none !important; }
+      html, body { margin: 0 !important; padding: 0 !important; background: white !important; }
+      body > * { visibility: hidden !important; }
       #_sumar_print_frame {
-        display: block !important;
+        visibility: visible !important;
         position: fixed !important;
         left: 0 !important; top: 0 !important;
         width: ${pageWidth} !important;
