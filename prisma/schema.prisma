@@ -68,10 +68,11 @@ model EtiquetteAtelier {
 }
 
 model ClientLogo {
-  id        String   @id @default(cuid())
-  nomClient String   @unique
-  logoData  String?
-  creeLe    DateTime @default(now())
+  id             String   @id @default(cuid())
+  notionClientId String?  @unique
+  nomClient      String   @unique
+  logoData       String?
+  creeLe         DateTime @default(now())
 }
 
 model EtiquetteClient {

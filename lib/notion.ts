@@ -15,6 +15,7 @@ export type CommandeNotion = {
   numeroCommande: string;
   numeroDevis: string;
   client: string;
+  notionClients: { id: string; nom: string }[];
   dateCommande: string | null;
   dateReception: string | null;
   dateLivraison: string | null;
@@ -110,6 +111,9 @@ export async function getCommandes(): Promise<CommandeNotion[]> {
       numeroCommande: getText(props["Commande"]),
       numeroDevis: getText(props["N° de devis"]),
       client,
+      notionClients: relIds
+        .map((id) => ({ id, nom: formatClient(clientNames[id] || "") }))
+        .filter((c) => c.nom),
       dateCommande: getDate(props["Date commande"]),
       dateReception: getDate(props["Réception"]),
       dateLivraison: getDate(props["Livraison cible (calc)"]),
