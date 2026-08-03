@@ -27,10 +27,16 @@ export function printViaIframe(html: string, pageWidth: string, pageHeight: stri
 
   const iframe = document.createElement("iframe");
   iframe.id = "_sumar_print_frame";
-  iframe.style.cssText = `position:fixed;left:-9999px;top:0;width:${pageWidth};height:${pageHeight};border:none;`;
+  iframe.setAttribute("scrolling", "no");
+  iframe.style.cssText = `position:fixed;left:-9999px;top:0;width:${pageWidth};height:${pageHeight};border:none;overflow:hidden;`;
   document.body.appendChild(iframe);
 
   iframe.onload = () => {
+    const iDoc = iframe.contentDocument;
+    if (iDoc) {
+      iDoc.documentElement.style.overflow = "hidden";
+      iDoc.body.style.overflow = "hidden";
+    }
     setTimeout(() => {
       window.print();
       setTimeout(() => { style.remove(); iframe.remove(); }, 1000);
