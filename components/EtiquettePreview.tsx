@@ -132,10 +132,8 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
               {(data.dimOriginale || "—").toUpperCase()}
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", padding: `0 ${px(1)}`,
-            fontFamily: fontMain, fontWeight: 900, fontSize: px(6) }}>→</div>
           <div style={{ flex: 1.3, display: "flex", flexDirection: "column", alignItems: "center",
-            justifyContent: "center", borderLeft: B, padding: `${px(0.8)} ${px(1.5)}` }}>
+            justifyContent: "center", padding: `${px(0.8)} ${px(1.5)}` }}>
             <div style={{ fontSize: px(2.3), fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase", marginBottom: px(0.3) }}>Après façonnage</div>
             <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(4.5) }}>
