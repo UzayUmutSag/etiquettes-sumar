@@ -42,6 +42,9 @@ export async function GET() {
       // 3. Nouveau client
       await prisma.clientLogo.create({ data: { notionClientId, nomClient } });
     }
+
+    // Supprime les entrées orphelines (pas encore associées à un ID Notion)
+    await prisma.clientLogo.deleteMany({ where: { notionClientId: null } });
   } catch {
     // Notion indisponible, on continue avec les données existantes
   }

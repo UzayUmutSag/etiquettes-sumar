@@ -100,28 +100,34 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
             display: "flex",
             flexDirection: logoData && logoOrientation === "horizontal" ? "column" : "row",
             alignItems: "center",
+            justifyContent: logoData && logoOrientation === "horizontal" ? "center" : undefined,
           }}>
             {logoData && logoOrientation === "horizontal" && (
               <div style={{
                 flexShrink: 0, width: "100%",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                padding: `${px(1)} ${px(1.5)} 0`, overflow: "hidden",
+                padding: `${px(1)} ${px(1.5)} ${px(0.5)}`, overflow: "hidden",
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logoData} style={{ maxHeight: px(9), maxWidth: "100%", objectFit: "contain" }} alt="" />
+                <img src={logoData} style={{ maxHeight: px(8), maxWidth: "100%", objectFit: "contain" }} alt="" />
               </div>
             )}
             {logoData && logoOrientation !== "horizontal" && (
               <div style={{
-                width: px(14), flexShrink: 0, alignSelf: "stretch",
+                width: px(14), flexShrink: 0,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 padding: px(1), overflow: "hidden",
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logoData} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} alt="" />
+                <img src={logoData} style={{ maxWidth: "100%", maxHeight: px(12), objectFit: "contain" }} alt="" />
               </div>
             )}
-            <div style={{ flex: 1, padding: `${px(0.5)} ${px(1.5)}`, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", width: "100%" }}>
+            <div style={{
+              flex: logoData && logoOrientation === "horizontal" ? "0 0 auto" : 1,
+              padding: `${px(0.5)} ${px(1.5)}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              overflow: "hidden", width: "100%",
+            }}>
               <FitText
                 text={up(data.client)}
                 maxPx={logoData ? pxNum(3.2) : pxNum(4.5)}

@@ -96,6 +96,18 @@ export default function EtiqettesClientPage() {
       .catch(() => {});
   }, []);
 
+  // Si logoMap arrive après la sélection (race au démarrage), on applique le logo rétroactivement
+  useEffect(() => {
+    if (!sel || logoData !== null) return;
+    const logo = logoMap[sel.client] ?? null;
+    if (!logo) return;
+    setLogoData(logo);
+    const img = new Image();
+    img.onload = () => setLogoOrientation(img.naturalWidth > img.naturalHeight * 1.4 ? "horizontal" : "square");
+    img.onerror = () => setLogoOrientation("square");
+    img.src = logo;
+  }, [logoMap, sel, logoData]);
+
   const filtrees = etiquettes.filter((e) =>
     [e.numeroCommande, e.client, e.clientFinal, e.reference, e.marque].some((v) =>
       v?.toLowerCase().includes(recherche.toLowerCase())
@@ -224,12 +236,12 @@ export default function EtiqettesClientPage() {
         .wrap { width: 75mm; height: 50mm; border: 1.5px solid #000; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
         /* Row 1 */
         .row1 { display: flex; border-bottom: 1.5px solid #000; flex: 1; }
-        .r1-left { flex: 3; border-right: 1.5px solid #000; display: flex; align-items: center; overflow: hidden; flex-direction: ${logoData && logoOrientation === "horizontal" ? "column" : "row"}; }
-        .r1-logo-h { flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding: 1mm 1.5mm 0; overflow: hidden; }
-        .r1-logo-h img { max-height: 9mm; max-width: 100%; object-fit: contain; }
-        .r1-logo-s { width: 14mm; flex-shrink: 0; align-self: stretch; display: flex; align-items: center; justify-content: center; padding: 1mm; overflow: hidden; }
-        .r1-logo-s img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .r1-client { flex: 1; padding: 0.5mm 1.5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; }
+        .r1-left { flex: 3; border-right: 1.5px solid #000; display: flex; align-items: center; overflow: hidden; flex-direction: ${logoData && logoOrientation === "horizontal" ? "column" : "row"}; ${logoData && logoOrientation === "horizontal" ? "justify-content: center;" : ""} }
+        .r1-logo-h { flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding: 1mm 1.5mm 0.5mm; overflow: hidden; }
+        .r1-logo-h img { max-height: 8mm; max-width: 100%; object-fit: contain; }
+        .r1-logo-s { width: 14mm; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 1mm; overflow: hidden; }
+        .r1-logo-s img { max-width: 100%; max-height: 12mm; object-fit: contain; }
+        .r1-client { flex: ${logoData && logoOrientation === "horizontal" ? "0 0 auto" : "1"}; padding: 0.5mm 1.5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; }
         .client-notion { font-family: ${fontMain}; font-weight: 900; font-size: 7mm; line-height: 1.1; text-transform: uppercase; word-break: keep-all; overflow-wrap: normal; overflow: hidden; text-align: center; }
         .r1-right { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1mm; }
         .qte-val { font-family: ${fontMain}; font-weight: 900; font-size: 8mm; line-height: 1; }
