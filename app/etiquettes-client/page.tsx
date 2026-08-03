@@ -154,6 +154,10 @@ export default function EtiqettesClientPage() {
   const imprimer = async () => {
     if (!sel) return;
 
+    // Ouvrir la fenêtre ICI, avant le await, pour rester dans le geste utilisateur
+    const win = window.open("", "_blank", "width=400,height=350");
+    if (!win) return;
+
     await fetch("/api/etiquettes-client", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -293,8 +297,6 @@ export default function EtiqettesClientPage() {
       ${lignes.flatMap((ligne) => Array.from({ length: ligne.totalColis }, () => labelHtml(ligne))).join("")}
     </body></html>`;
 
-    const win = window.open("", "_blank", "width=400,height=350");
-    if (!win) return;
     win.document.write(html);
     win.document.close();
     win.onload = () => { win.focus(); win.print(); win.close(); };
