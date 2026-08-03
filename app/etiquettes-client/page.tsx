@@ -232,10 +232,10 @@ export default function EtiqettesClientPage() {
       <meta charset="utf-8"/>
       <title>Étiquettes Client ${sel.numeroCommande}</title>
       <style>
-        @page { size: 3in 2in; margin: 0; }
+        @page { size: 75mm 50mm; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: ${fontBody}; color: #000; background: white; }
-        .wrap { width: 3in; height: 2in; border: 1.5px solid #000; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
+        .wrap { width: 75mm; height: 50mm; border: 1.5px solid #000; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
         /* Row 1 */
         .row1 { display: flex; border-bottom: 1.5px solid #000; flex: 1; }
         .r1-left { flex: 3; border-right: 1.5px solid #000; display: flex; align-items: center; overflow: hidden; flex-direction: ${logoData && logoOrientation === "horizontal" ? "column" : "row"}; ${logoData && logoOrientation === "horizontal" ? "justify-content: center;" : ""} }
@@ -295,7 +295,7 @@ export default function EtiqettesClientPage() {
       ${lignes.flatMap((ligne) => Array.from({ length: ligne.totalColis }, () => labelHtml(ligne))).join("")}
     </body></html>`;
 
-    printViaIframe(html, "3in", "2in");
+    printViaIframe(html, "75mm", "50mm");
   };
 
   return (
@@ -328,7 +328,7 @@ export default function EtiqettesClientPage() {
             <div style={{ color: "white", fontWeight: 700, fontSize: 15, letterSpacing: "-0.01em" }}>
               Étiquettes Client
             </div>
-            <div style={{ color: "#94A3B8", fontSize: 11 }}>3 × 2 in · Sumar.F</div>
+            <div style={{ color: "#94A3B8", fontSize: 11 }}>75 × 50 mm · Sumar.F</div>
           </div>
         </div>
 
@@ -606,7 +606,7 @@ export default function EtiqettesClientPage() {
         }}>
           <div style={{ padding: "16px 20px", borderBottom: "1px solid #E2E8F0", background: "white" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#1E2640" }}>Aperçu étiquette client</div>
-            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>3 × 2 in</div>
+            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>75 × 50 mm</div>
           </div>
           <div style={{
             flex: 1, overflowY: "auto", display: "flex", alignItems: "flex-start",
