@@ -190,12 +190,12 @@ export default function EtiqettesClientPage() {
             ${logoData && logoOrientation === "horizontal" ? `<div class="r1-logo-h"><img src="${logoData}" /></div>` : ""}
             ${logoData && logoOrientation !== "horizontal" ? `<div class="r1-logo-s"><img src="${logoData}" /></div>` : ""}
             <div class="r1-client">
-              <div class="client-notion" data-autofit="${logoData ? 3.2 : 7}" data-min="2.5">${clientNotion}</div>
+              <div class="client-notion" data-autofit="${logoData ? 3.2 : 4.5}" data-min="2">${clientNotion}</div>
             </div>
           </div>
           <div class="r1-right">
-            <div class="qte-val">${ligne.nombre} U</div>
-            <div class="qte-sub">/ carton</div>
+            <div class="qte-val">${ligne.nombre}</div>
+            <div class="qte-sub">unités</div>
           </div>
         </div>
         <div class="row2">
@@ -244,7 +244,7 @@ export default function EtiqettesClientPage() {
         .r1-logo-s { width: 14mm; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 1mm; overflow: hidden; }
         .r1-logo-s img { max-width: 100%; max-height: 12mm; object-fit: contain; }
         .r1-client { flex: ${logoData && logoOrientation === "horizontal" ? "0 0 auto" : "1"}; padding: 0.5mm 1.5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; }
-        .client-notion { font-family: ${fontMain}; font-weight: 900; font-size: 7mm; line-height: 1.1; text-transform: uppercase; word-break: keep-all; overflow-wrap: normal; overflow: hidden; text-align: center; }
+        .client-notion { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; line-height: 1.1; text-transform: uppercase; word-break: keep-all; overflow-wrap: normal; overflow: hidden; text-align: center; }
         .r1-right { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1mm; }
         .qte-val { font-family: ${fontMain}; font-weight: 900; font-size: 8mm; line-height: 1; }
         .qte-sub { font-size: 2.2mm; color: #555; margin-top: 0.4mm; }
