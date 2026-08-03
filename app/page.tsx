@@ -217,13 +217,7 @@ export default function Home() {
         input, textarea { font-family: inherit; }
         ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-        @media print {
-          @page { size: 75mm 125mm; margin: 0; }
-          body * { visibility: hidden; }
-          .etiquette-print, .etiquette-print * { visibility: visible; }
-          .etiquette-print { position: fixed !important; top: 0 !important; left: 0 !important; }
-          .no-print { display: none !important; }
-        }
+
       `}</style>
 
       {/* Header */}
