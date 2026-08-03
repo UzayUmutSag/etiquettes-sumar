@@ -132,35 +132,34 @@ export default function Home() {
       <meta charset="utf-8"/>
       <title>Étiquette ${etiquette.numeroCommande}</title>
       <style>
-        @page { size: 75mm 125mm; margin: 0; }
+        @page { size: 4in 6in; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { width: 75mm; height: 125mm; font-family: ${fontBody}; color: #000; background: white; }
-        .wrap { width: 75mm; height: 125mm; border: 2px solid #000; display: flex; flex-direction: column; overflow: hidden; }
-        .header { padding: 1.5mm 2.5mm 1mm; border-bottom: 2px solid #000; }
-        .client-name { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; line-height: 1.05; text-transform: uppercase; }
-        .cmd-line { display: flex; align-items: baseline; gap: 2mm; margin-top: 0.5mm; }
-        .cmd { font-size: 3mm; font-weight: 700; }
-        .devis { font-size: 3mm; }
-        .client-final { font-size: 2.6mm; margin-top: 0.3mm; }
-        .date-block { border-bottom: 2px solid #000; padding: 1mm 2mm; text-align: center; }
-        .date-label { font-weight: 700; font-size: 2.5mm; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3mm; }
-        .date-val { font-family: ${fontMain}; font-weight: 900; font-size: 7.5mm; letter-spacing: -0.02em; line-height: 1; }
+        body { width: 4in; height: 6in; font-family: ${fontBody}; color: #000; background: white; }
+        .wrap { width: 4in; height: 6in; border: 2px solid #000; display: flex; flex-direction: column; overflow: hidden; }
+        .header { padding: 2mm 3mm 1.5mm; border-bottom: 2px solid #000; }
+        .client-name { font-family: ${fontMain}; font-weight: 900; font-size: 6mm; line-height: 1.05; text-transform: uppercase; }
+        .cmd-line { display: flex; align-items: baseline; gap: 2.5mm; margin-top: 0.5mm; }
+        .cmd { font-size: 4mm; font-weight: 700; }
+        .devis { font-size: 4mm; }
+        .client-final { font-size: 3.5mm; margin-top: 0.3mm; }
+        .date-block { border-bottom: 2px solid #000; padding: 1.5mm 2.5mm; text-align: center; }
+        .date-label { font-weight: 700; font-size: 3mm; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5mm; }
+        .date-val { font-family: ${fontMain}; font-weight: 900; font-size: 10mm; letter-spacing: -0.02em; line-height: 1; }
         .table { flex: 1; display: flex; flex-direction: column; border-bottom: 2px solid #000; }
-        .row { display: flex; border-bottom: 1.5px solid #000; height: 9mm; }
-        .row-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; display: flex; align-items: center; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
-        .row-val { flex: 1; padding: 0.8mm 1.5mm; display: flex; align-items: center; font-family: ${fontMain}; font-weight: 700; font-size: 4mm; }
-        .fin-row { display: flex; border-bottom: 1.5px solid #000; min-height: 9mm; }
-        .fin-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; display: flex; align-items: center; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
-        .fin-tags { flex: 1; padding: 0.8mm 1.5mm; display: flex; flex-wrap: wrap; align-content: center; gap: 0.8mm; }
-        .fin-tag { border: 1.5px solid #000; padding: 0.4mm 1.2mm; font-size: 4mm; font-weight: 700; line-height: 1.3; white-space: nowrap; }
-        .dim-row { display: flex; border-bottom: 1.5px solid #000; height: 11mm; }
-        .dim-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.8mm 1.5mm; }
-        .dim-cell-label { font-size: 2.3mm; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3mm; }
-        .dim-cell-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; }
-        .dim-sep { display: flex; align-items: center; padding: 0 1mm; font-family: ${fontMain}; font-weight: 900; font-size: 6mm; }
+        .row { display: flex; border-bottom: 1.5px solid #000; height: 12mm; }
+        .row-label { width: 27mm; border-right: 1.5px solid #000; padding: 1.5mm 2mm; display: flex; align-items: center; font-size: 3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
+        .row-val { flex: 1; padding: 1mm 2mm; display: flex; align-items: center; font-family: ${fontMain}; font-weight: 700; font-size: 5mm; }
+        .fin-row { display: flex; border-bottom: 1.5px solid #000; min-height: 12mm; }
+        .fin-label { width: 27mm; border-right: 1.5px solid #000; padding: 1.5mm 2mm; display: flex; align-items: center; font-size: 3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
+        .fin-tags { flex: 1; padding: 1mm 2mm; display: flex; flex-wrap: wrap; align-content: center; gap: 1mm; }
+        .fin-tag { border: 1.5px solid #000; padding: 0.5mm 1.5mm; font-size: 5mm; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+        .dim-row { display: flex; border-bottom: 1.5px solid #000; height: 14mm; }
+        .dim-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1mm 2mm; }
+        .dim-cell-label { font-size: 3mm; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5mm; }
+        .dim-cell-val { font-family: ${fontMain}; font-weight: 900; font-size: 6mm; }
         .obs-row { display: flex; flex: 1; }
-        .obs-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; word-break: break-word; }
-        .obs-val { flex: 1; padding: 1mm 1.5mm; font-size: 3mm; line-height: 1.4; }
+        .obs-label { width: 27mm; border-right: 1.5px solid #000; padding: 1.5mm 2mm; font-size: 3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; word-break: break-word; }
+        .obs-val { flex: 1; padding: 1.5mm 2mm; font-size: 4mm; line-height: 1.4; }
       </style>
     </head><body>
       <div class="wrap">
@@ -185,8 +184,7 @@ export default function Home() {
               <div class="dim-cell-label">Origine</div>
               <div class="dim-cell-val">${up(etiquette.dimOriginale)}</div>
             </div>
-            <div class="dim-sep">→</div>
-            <div class="dim-cell" style="border-left:1.5px solid #000">
+            <div class="dim-cell">
               <div class="dim-cell-label">Après façonnage</div>
               <div class="dim-cell-val">${up(etiquette.dimFaconnage)}</div>
             </div>
@@ -208,7 +206,7 @@ export default function Home() {
       </div>
     </body></html>`;
 
-    printViaIframe(html, "75mm", "125mm");
+    printViaIframe(html, "4in", "6in");
   };
 
   return (
@@ -220,7 +218,7 @@ export default function Home() {
         ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
         @media print {
-          @page { size: 75mm 125mm; margin: 0; }
+          @page { size: 4in 6in; margin: 0; }
           body * { visibility: hidden; }
           .etiquette-print, .etiquette-print * { visibility: visible; }
           .etiquette-print { position: fixed !important; top: 0 !important; left: 0 !important; }
@@ -240,7 +238,7 @@ export default function Home() {
           </div>
           <div>
             <div style={{ color: "white", fontWeight: 700, fontSize: 15, letterSpacing: "-0.01em" }}>Étiquettes Atelier</div>
-            <div style={{ color: "#94A3B8", fontSize: 11 }}>75 × 125 mm · Sumar.F</div>
+            <div style={{ color: "#94A3B8", fontSize: 11 }}>4 × 6 in · Sumar.F</div>
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -401,7 +399,7 @@ export default function Home() {
           display: "flex", flexDirection: "column", flexShrink: 0 }}>
           <div style={{ padding: "16px 20px", borderBottom: "1px solid #E2E8F0", background: "white" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#1E2640" }}>Aperçu étiquette</div>
-            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>75 × 125 mm</div>
+            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>4 × 6 in</div>
           </div>
           <div style={{ flex: 1, overflowY: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: 24 }}>
             {etiquette ? (
