@@ -71,8 +71,12 @@ export default function EtiqettesClientPage() {
   const [dateProduction, setDateProduction] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [recherche, setRecherche] = useState("");
+  const [logoMap, setLogoMap] = useState<Record<string, string>>({});
+  const [logoData, setLogoData] = useState<string | null>(null);
+  const [logoOrientation, setLogoOrientation] = useState<"horizontal" | "square" | null>(null);
 
   useEffect(() => {
+    setDateProduction(new Date().toISOString().slice(0, 10));
     fetch("/api/etiquettes")
       .then((r) => r.json())
       .then((data) => {
@@ -81,6 +85,15 @@ export default function EtiqettesClientPage() {
         }
       })
       .finally(() => setLoading(false));
+    fetch("/api/referentiel/clients")
+      .then((r) => r.json())
+      .then((clients: { nomClient: string; logoData: string | null }[]) => {
+        if (!Array.isArray(clients)) return;
+        const map: Record<string, string> = {};
+        clients.forEach((c) => { if (c.logoData) map[c.nomClient] = c.logoData; });
+        setLogoMap(map);
+      })
+      .catch(() => {});
   }, []);
 
   const filtrees = etiquettes.filter((e) =>
@@ -93,8 +106,17 @@ export default function EtiqettesClientPage() {
     setSel(e);
     setLignes([{ nombre: 1, totalColis: 1 }]);
     setActiveLigne(0);
-    setDateProduction("");
+    setDateProduction(new Date().toISOString().slice(0, 10));
     setShowPreview(false);
+    const logo = logoMap[e.client] ?? null;
+    setLogoData(logo);
+    setLogoOrientation(null);
+    if (logo) {
+      const img = new Image();
+      img.onload = () => setLogoOrientation(img.naturalWidth > img.naturalHeight * 1.4 ? "horizontal" : "square");
+      img.onerror = () => setLogoOrientation("square");
+      img.src = logo;
+    }
   };
 
   const updateLigne = (i: number, field: keyof LigneColis, val: number) => {
@@ -151,7 +173,11 @@ export default function EtiqettesClientPage() {
       <div class="wrap">
         <div class="row1">
           <div class="r1-left">
-            <div class="client-notion" data-autofit="7" data-min="2.5">${clientNotion}</div>
+            ${logoData && logoOrientation === "horizontal" ? `<div class="r1-logo-h"><img src="${logoData}" /></div>` : ""}
+            ${logoData && logoOrientation !== "horizontal" ? `<div class="r1-logo-s"><img src="${logoData}" /></div>` : ""}
+            <div class="r1-client">
+              <div class="client-notion" data-autofit="${logoData ? 3.2 : 7}" data-min="2.5">${clientNotion}</div>
+            </div>
           </div>
           <div class="r1-right">
             <div class="qte-val">${ligne.nombre} U</div>
@@ -161,30 +187,30 @@ export default function EtiqettesClientPage() {
         <div class="row2">
           <div class="r2-left">
             <div class="sec-lbl">Marque / Référence</div>
-            <div class="marque-val" data-autofit="4.5" data-min="2">${marqueVal}</div>
-            <div class="modele-val" data-autofit="2.3" data-min="1.5">${modeleVal}</div>
+            <div class="marque-val" data-autofit="3" data-min="2">${marqueVal}</div>
+            <div class="modele-val" data-autofit="3" data-min="1.5">${modeleVal}</div>
           </div>
           <div class="r2-right">
             <div class="sec-lbl">Format Origine</div>
-            <div class="dim-orig-val" data-autofit="4.5" data-min="2">${dimOrigVal}</div>
+            <div class="dim-orig-val" data-autofit="4" data-min="2">${dimOrigVal}</div>
           </div>
         </div>
         <div class="row3">
           <div class="r3-left">
             <div class="sec-lbl">Client Final</div>
-            <div class="client-final-val" data-autofit="4.3" data-min="2">${clientFinalVal}</div>
+            <div class="client-final-val" data-autofit="3" data-min="2">${clientFinalVal}</div>
             ${refClientVal ? `<div class="ref-client">${refClientVal}</div>` : ""}
           </div>
           <div class="r3-right">
             <div class="sec-lbl">Façonnage · Finition</div>
-            <div class="faconnage-val" data-autofit="4.3" data-min="2">${dimFaçVal}</div>
-            <div class="finition-val" data-autofit="2.3" data-min="1.5">${finitionVal}</div>
-            ${dateVal ? `<div class="date-val" data-autofit="2.1" data-min="1.5">${dateVal}</div>` : ""}
+            <div class="faconnage-val" data-autofit="3" data-min="2">${dimFaçVal}</div>
+            <div class="finition-val" data-autofit="3" data-min="1.5">${finitionVal}</div>
+            ${dateVal ? `<div class="date-val">${dateVal}</div>` : ""}
           </div>
         </div>
         <div class="footer">
-          <span class="cmd-val">${sel.numeroCommande || "—"}</span>
-          ${devisVal ? `<span class="devis-val">${devisVal}</span>` : ""}
+          <span class="footer-val">${sel.numeroCommande || "—"}</span>
+          ${devisVal ? `<span class="footer-val">-</span><span class="footer-val">${devisVal}</span>` : ""}
         </div>
       </div>`;
 
@@ -197,34 +223,39 @@ export default function EtiqettesClientPage() {
         body { font-family: ${fontBody}; color: #000; background: white; }
         .wrap { width: 75mm; height: 50mm; border: 1.5px solid #000; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
         /* Row 1 */
-        .row1 { display: flex; border-bottom: 1.5px solid #000; flex: 0 0 35%; }
-        .r1-left { flex: 3; padding: 1.2mm 1.5mm; border-right: 1.5px solid #000; display: flex; align-items: center; overflow: hidden; }
-        .client-notion { font-family: ${fontMain}; font-weight: 900; font-size: 7mm; line-height: 1.1; text-transform: uppercase; word-break: keep-all; overflow-wrap: normal; overflow: hidden; }
-        .r1-right { flex: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1mm; }
+        .row1 { display: flex; border-bottom: 1.5px solid #000; flex: 1; }
+        .r1-left { flex: 3; border-right: 1.5px solid #000; display: flex; align-items: center; overflow: hidden; flex-direction: ${logoData && logoOrientation === "horizontal" ? "column" : "row"}; }
+        .r1-logo-h { flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding: 1mm 1.5mm 0; overflow: hidden; }
+        .r1-logo-h img { max-height: 9mm; max-width: 100%; object-fit: contain; }
+        .r1-logo-s { width: 14mm; flex-shrink: 0; align-self: stretch; display: flex; align-items: center; justify-content: center; padding: 1mm; overflow: hidden; }
+        .r1-logo-s img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .r1-client { flex: 1; padding: 0.5mm 1.5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; }
+        .client-notion { font-family: ${fontMain}; font-weight: 900; font-size: 7mm; line-height: 1.1; text-transform: uppercase; word-break: keep-all; overflow-wrap: normal; overflow: hidden; text-align: center; }
+        .r1-right { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1mm; }
         .qte-val { font-family: ${fontMain}; font-weight: 900; font-size: 8mm; line-height: 1; }
         .qte-sub { font-size: 2.2mm; color: #555; margin-top: 0.4mm; }
         /* Row 2 */
-        .row2 { display: flex; border-bottom: 1.5px solid #000; flex: 0 0 23%; }
-        .r2-left { flex: 3; padding: 0.9mm 1.5mm; border-right: 1.5px solid #000; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
-        .r2-right { flex: 2; padding: 0.9mm 1.2mm; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
+        .row2 { display: flex; border-bottom: 1.5px solid #000; flex: 0 0 auto; }
+        .r2-left { flex: 3; padding: 0.5mm 1.5mm; border-right: 1.5px solid #000; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
+        .r2-right { flex: 2; padding: 0.5mm 1.2mm; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
         /* Row 3 */
-        .row3 { display: flex; border-bottom: 1.5px solid #000; flex: 1; overflow: hidden; }
-        .r3-left { flex: 3; padding: 0.8mm 1.5mm; border-right: 1.5px solid #000; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
-        .r3-right { flex: 2; padding: 0.8mm 1.2mm; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
+        .row3 { display: flex; border-bottom: 1.5px solid #000; flex: 0 0 auto; overflow: hidden; }
+        .r3-left { flex: 3; padding: 0.5mm 1.5mm; border-right: 1.5px solid #000; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
+        .r3-right { flex: 2; padding: 0.5mm 1.2mm; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
         /* Footer */
-        .footer { padding: 0.6mm 1.5mm; flex-shrink: 0; display: flex; align-items: center; gap: 2mm; }
+        .footer { padding: 0.6mm 1.5mm; flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 1mm; overflow: hidden; }
         /* Shared */
         .sec-lbl { font-size: 1.7mm; font-weight: 700; text-transform: uppercase; color: #000; letter-spacing: 0.04em; margin-bottom: 0.4mm; line-height: 1; }
-        .marque-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; line-height: 1.1; text-transform: uppercase; }
-        .modele-val { font-size: 2.3mm; font-weight: 400; text-transform: uppercase; margin-top: 0.2mm; line-height: 1.2; }
-        .dim-orig-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; line-height: 1.1; text-transform: uppercase; }
-        .client-final-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.3mm; line-height: 1.1; text-transform: uppercase; word-break: keep-all; overflow-wrap: normal; overflow: hidden; }
-        .ref-client { font-size: 2.1mm; color: #555; margin-top: 0.3mm; line-height: 1.2; }
-        .faconnage-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.3mm; line-height: 1.1; text-transform: uppercase; }
-        .finition-val { font-size: 2.3mm; font-weight: 400; text-transform: uppercase; margin-top: 0.2mm; line-height: 1.2; }
-        .date-val { font-size: 2.1mm; color: #555; margin-top: 0.3mm; line-height: 1.2; }
-        .cmd-val { font-family: ${fontMain}; font-weight: 900; font-size: 3.8mm; letter-spacing: -0.01em; }
-        .devis-val { font-size: 2.4mm; color: #555; font-weight: 600; }
+        .r2-right .sec-lbl, .r3-right .sec-lbl { text-align: center; }
+        .marque-val { font-family: ${fontMain}; font-weight: 700; font-size: 3mm; line-height: 1.1; text-transform: uppercase; }
+        .modele-val { font-size: 3mm; font-weight: 400; text-transform: uppercase; line-height: 1.2; }
+        .dim-orig-val { font-family: ${fontMain}; font-weight: 700; font-size: 4mm; line-height: 1.1; text-transform: uppercase; text-align: center; }
+        .client-final-val { font-family: ${fontMain}; font-weight: 700; font-size: 3mm; line-height: 1.1; text-transform: uppercase; overflow: hidden; }
+        .ref-client { font-size: 2.1mm; color: #555; line-height: 1.2; }
+        .faconnage-val { font-family: ${fontMain}; font-weight: 700; font-size: 3mm; line-height: 1.1; text-transform: uppercase; text-align: center; }
+        .finition-val { font-size: 3mm; font-weight: 700; text-transform: uppercase; line-height: 1.2; text-align: center; }
+        .date-val { font-size: 2.1mm; color: #444; line-height: 1.2; text-align: center; }
+        .footer-val { font-family: ${fontBody}; font-weight: 400; font-size: 2.5mm; line-height: 1; }
       </style>
       <script>
         function autofit() {
@@ -578,6 +609,8 @@ export default function EtiqettesClientPage() {
                 colisTotal={lignes[activeLigne]?.totalColis ?? 1}
                 nombreParColis={lignes[activeLigne]?.nombre}
                 dateProduction={dateProduction}
+                logoData={logoData}
+              logoOrientation={logoOrientation}
               />
             ) : (
               <div style={{ textAlign: "center", color: "#CBD5E1" }}>

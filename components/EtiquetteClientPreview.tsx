@@ -23,6 +23,8 @@ type Props = {
   colisTotal: number;
   nombreParColis?: number;
   dateProduction?: string;
+  logoData?: string | null;
+  logoOrientation?: "horizontal" | "square" | null;
 };
 
 const up = (s: string | null | undefined) => (s || "—").toUpperCase();
@@ -63,7 +65,7 @@ function FitText({ text, maxPx, minPx, fontFamily, style }: {
   );
 }
 
-export default function EtiquetteClientPreview({ data, nombreParColis, dateProduction }: Props) {
+export default function EtiquetteClientPreview({ data, nombreParColis, dateProduction, logoData, logoOrientation }: Props) {
   const W = 283; // 75mm @ 96dpi
   const H = 189; // 50mm @ 96dpi
   const B = "1.5px solid #000";
@@ -92,18 +94,42 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
       }}>
 
         {/* ── LIGNE 1 : Client notion | Qté / carton ── */}
-        <div style={{ display: "flex", borderBottom: B, flex: "0 0 35%" }}>
+        <div style={{ display: "flex", borderBottom: B, flex: 1 }}>
           <div style={{
-            flex: 3, padding: `${px(1.2)} ${px(1.5)}`, borderRight: B,
-            display: "flex", alignItems: "center", overflow: "hidden",
+            flex: 3, borderRight: B, overflow: "hidden",
+            display: "flex",
+            flexDirection: logoData && logoOrientation === "horizontal" ? "column" : "row",
+            alignItems: "center",
           }}>
-            <FitText
-              text={up(data.client)}
-              maxPx={pxNum(4.5)}
-              minPx={pxNum(2)}
-              fontFamily={fontMain}
-              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
-            />
+            {logoData && logoOrientation === "horizontal" && (
+              <div style={{
+                flexShrink: 0, width: "100%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                padding: `${px(1)} ${px(1.5)} 0`, overflow: "hidden",
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoData} style={{ maxHeight: px(9), maxWidth: "100%", objectFit: "contain" }} alt="" />
+              </div>
+            )}
+            {logoData && logoOrientation !== "horizontal" && (
+              <div style={{
+                width: px(14), flexShrink: 0, alignSelf: "stretch",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                padding: px(1), overflow: "hidden",
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoData} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} alt="" />
+              </div>
+            )}
+            <div style={{ flex: 1, padding: `${px(0.5)} ${px(1.5)}`, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", width: "100%" }}>
+              <FitText
+                text={up(data.client)}
+                maxPx={logoData ? pxNum(3.2) : pxNum(4.5)}
+                minPx={pxNum(2)}
+                fontFamily={fontMain}
+                style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase", textAlign: "center" }}
+              />
+            </div>
           </div>
           <div style={{
             flex: 1, display: "flex", flexDirection: "column",
@@ -118,16 +144,16 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
         </div>
 
         {/* ── LIGNE 2 : Marque / Référence | Format Origine ── */}
-        <div style={{ display: "flex", borderBottom: B, flex: "0 0 23%" }}>
+        <div style={{ display: "flex", borderBottom: B, flex: "0 0 auto" }}>
           <div style={{
-            flex: 3, padding: `${px(0.8)} ${px(1.5)}`, borderRight: B,
+            flex: 3, padding: `${px(0.5)} ${px(1.5)}`, borderRight: B,
             display: "flex", flexDirection: "column", justifyContent: "flex-start",
             overflow: "hidden",
           }}>
             <SecLabel>Marque / Référence</SecLabel>
             <FitText
               text={up(data.marque)}
-              maxPx={pxNum(4)}
+              maxPx={pxNum(3)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
               style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
@@ -140,8 +166,8 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
             />
           </div>
           <div style={{
-            flex: 2, padding: `${px(0.8)} ${px(1.2)}`,
-            display: "flex", flexDirection: "column", justifyContent: "flex-start",
+            flex: 2, padding: `${px(0.5)} ${px(1.2)}`,
+            display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
             overflow: "hidden",
           }}>
             <SecLabel>Format Origine</SecLabel>
@@ -150,25 +176,25 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
               maxPx={pxNum(4)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase", textAlign: "center" }}
             />
           </div>
         </div>
 
         {/* ── LIGNE 3 : Client final | Façonnage · Finition ── */}
-        <div style={{ display: "flex", borderBottom: B, flex: 1, overflow: "hidden" }}>
+        <div style={{ display: "flex", borderBottom: B, flex: "0 0 auto", overflow: "hidden" }}>
           <div style={{
-            flex: 3, padding: `${px(0.8)} ${px(1.5)}`, borderRight: B,
+            flex: 3, padding: `${px(0.5)} ${px(1.5)}`, borderRight: B,
             display: "flex", flexDirection: "column", justifyContent: "flex-start",
             overflow: "hidden",
           }}>
             <SecLabel>Client Final</SecLabel>
             <FitText
               text={up(data.clientFinal || "—")}
-              maxPx={pxNum(4.3)}
+              maxPx={pxNum(3)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 900, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
             />
             {data.refClient && (
               <div style={{ fontSize: px(2.1), color: "#555", marginTop: px(0.3), lineHeight: 1.2, overflow: "hidden" }}>
@@ -177,24 +203,24 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
             )}
           </div>
           <div style={{
-            flex: 2, padding: `${px(0.8)} ${px(1.2)}`,
-            display: "flex", flexDirection: "column", justifyContent: "flex-start",
+            flex: 2, padding: `${px(0.5)} ${px(1.2)}`,
+            display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
             overflow: "hidden",
           }}>
             <SecLabel>Façonnage · Finition</SecLabel>
             <FitText
               text={up(data.dimFaconnage)}
-              maxPx={pxNum(4)}
+              maxPx={pxNum(3)}
               minPx={pxNum(2)}
               fontFamily={fontMain}
-              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase" }}
+              style={{ fontWeight: 700, lineHeight: 1.1, textTransform: "uppercase", textAlign: "center" }}
             />
             {(data.typeProduit || data.finition) && (
               <FitText
                 text={[data.typeProduit, data.finition].filter(Boolean).map(s => s!.toUpperCase()).join(" · ")}
                 maxPx={pxNum(3)}
                 minPx={pxNum(1.5)}
-                style={{ fontWeight: 700, textTransform: "uppercase", marginTop: px(0.2), lineHeight: 1.2 }}
+                style={{ fontWeight: 700, textTransform: "uppercase", marginTop: px(0.2), lineHeight: 1.2, textAlign: "center" }}
               />
             )}
             {dateProduction && (
@@ -208,7 +234,7 @@ export default function EtiquetteClientPreview({ data, nombreParColis, dateProdu
         {/* ── FOOTER : N° Commande + N° Devis ── */}
         <div style={{
           padding: `${px(0.6)} ${px(1.5)}`, flexShrink: 0,
-          display: "flex", alignItems: "center", gap: px(1), overflow: "hidden",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: px(1), overflow: "hidden",
         }}>
           <span style={{ fontFamily: fontBody, fontWeight: 400, fontSize: px(2.5), lineHeight: 1 }}>
             {data.numeroCommande || "—"}

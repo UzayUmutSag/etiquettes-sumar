@@ -76,11 +76,16 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtrees = commandes.filter((c) =>
-    [c.numeroCommande, c.client, c.numeroDevis].some((v) =>
-      v?.toLowerCase().includes(recherche.toLowerCase())
+  const filtrees = commandes
+    .filter((c) =>
+      [c.numeroCommande, c.client, c.numeroDevis].some((v) =>
+        v?.toLowerCase().includes(recherche.toLowerCase())
+      )
     )
-  );
+    .sort((a, b) => {
+      const num = (s: string) => parseInt(s?.split("-").pop() || "0", 10);
+      return num(b.numeroCommande) - num(a.numeroCommande);
+    });
 
   const selectionner = (c: CommandeNotion) => { setSel(c); setFormData(FORM_VIDE); setEtiquette(null); };
   const generer = () => {
@@ -146,8 +151,8 @@ export default function Home() {
         .fin-label { width: 20mm; border-right: 1.5px solid #000; padding: 1mm 1.5mm; display: flex; align-items: center; font-size: 2.3mm; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
         .fin-tags { flex: 1; padding: 0.8mm 1.5mm; display: flex; flex-wrap: wrap; align-content: center; gap: 0.8mm; }
         .fin-tag { border: 1.5px solid #000; padding: 0.4mm 1.2mm; font-size: 4mm; font-weight: 700; line-height: 1.3; white-space: nowrap; }
-        .dim-row { display: flex; border-bottom: 1.5px solid #000; height: 15mm; }
-        .dim-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2mm 1.5mm; }
+        .dim-row { display: flex; border-bottom: 1.5px solid #000; height: 11mm; }
+        .dim-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.8mm 1.5mm; }
         .dim-cell-label { font-size: 2.3mm; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3mm; }
         .dim-cell-val { font-family: ${fontMain}; font-weight: 900; font-size: 4.5mm; }
         .dim-sep { display: flex; align-items: center; padding: 0 1mm; font-family: ${fontMain}; font-weight: 900; font-size: 6mm; }
@@ -162,7 +167,7 @@ export default function Home() {
           <div class="cmd-line">
             <span class="cmd">${etiquette.numeroCommande || "—"}${etiquette.numeroDevis ? ` - ${etiquette.numeroDevis}` : ""}</span>
           </div>
-          <div class="client-final">Client final : ${up(etiquette.clientFinal)} · Référence Client : ${up(etiquette.refClient)}</div>
+          <div class="client-final"><div>Client final : ${up(etiquette.clientFinal)}</div><div>Référence Client : ${up(etiquette.refClient)}</div></div>
         </div>
         <div class="date-block">
           <div class="date-label">Livraison planifiée le</div>

@@ -96,8 +96,9 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
             <span style={{ fontSize: px(3), fontWeight: 700 }}>{data.numeroDevis}</span>
           </>}
         </div>
-        <div style={{ fontSize: px(2.6), marginTop: px(0.3) }}>
-          Client final : {(data.clientFinal || "—").toUpperCase()} · Référence Client : {(data.refClient || "—").toUpperCase()}
+        <div style={{ fontSize: px(2.6), marginTop: px(0.3), lineHeight: 1.4 }}>
+          <div>Client final : {(data.clientFinal || "—").toUpperCase()}</div>
+          <div>Référence Client : {(data.refClient || "—").toUpperCase()}</div>
         </div>
       </div>
 
@@ -122,9 +123,9 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
         <Row label="QTÉ À PRO" value={data.quantite ? `${data.quantite} U` : "—"} px={px} B={B} fontMain={fontMain} />
 
         {/* Dimensions */}
-        <div style={{ display: "flex", borderBottom: B, height: px(15) }}>
+        <div style={{ display: "flex", borderBottom: B, height: px(11) }}>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
-            justifyContent: "center", borderRight: B, padding: `${px(2)} ${px(1.5)}` }}>
+            justifyContent: "center", borderRight: B, padding: `${px(0.8)} ${px(1.5)}` }}>
             <div style={{ fontSize: px(2.3), fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase", marginBottom: px(0.3) }}>Origine</div>
             <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(4.5) }}>
@@ -134,7 +135,7 @@ function Etiquette({ data, W, H, B, B2, fontMain, fontBody, print }: {
           <div style={{ display: "flex", alignItems: "center", padding: `0 ${px(1)}`,
             fontFamily: fontMain, fontWeight: 900, fontSize: px(6) }}>→</div>
           <div style={{ flex: 1.3, display: "flex", flexDirection: "column", alignItems: "center",
-            justifyContent: "center", borderLeft: B, padding: `${px(2)} ${px(1.5)}` }}>
+            justifyContent: "center", borderLeft: B, padding: `${px(0.8)} ${px(1.5)}` }}>
             <div style={{ fontSize: px(2.3), fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase", marginBottom: px(0.3) }}>Après façonnage</div>
             <div style={{ fontFamily: fontMain, fontWeight: 900, fontSize: px(4.5) }}>
