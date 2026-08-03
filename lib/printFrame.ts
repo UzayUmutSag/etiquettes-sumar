@@ -1,21 +1,45 @@
-export function printViaIframe(html: string, width: string, height: string) {
-  const prev = document.getElementById("_sumar_print_frame");
-  if (prev) prev.remove();
+export function printViaIframe(html: string, pageWidth: string, pageHeight: string) {
+  document.getElementById("_sumar_print_style")?.remove();
+  document.getElementById("_sumar_print_frame")?.remove();
 
-  const blob = new Blob([html], { type: "text/html; charset=utf-8" });
-  const url = URL.createObjectURL(blob);
+  // CSS injecté dans la page principale : pendant l'impression, tout est caché
+  // sauf l'iframe qui est affiché en pleine page
+  const style = document.createElement("style");
+  style.id = "_sumar_print_style";
+  style.textContent = `
+    @media print {
+      @page { size: ${pageWidth} ${pageHeight}; margin: 0; }
+      body > * { visibility: hidden; }
+      #_sumar_print_frame {
+        visibility: visible !important;
+        position: fixed !important;
+        left: 0 !important; top: 0 !important;
+        width: 100% !important; height: 100% !important;
+        border: none !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 
+  // Iframe hors écran mais avec les vraies dimensions (pour que l'autofit fonctionne)
   const iframe = document.createElement("iframe");
   iframe.id = "_sumar_print_frame";
-  iframe.style.cssText = `position:fixed;left:-9999px;top:-9999px;width:${width};height:${height};border:none;`;
+  iframe.style.cssText = `position:fixed;left:-9999px;top:0;width:${pageWidth};height:${pageHeight};border:none;`;
+  document.body.appendChild(iframe);
 
   iframe.onload = () => {
-    iframe.contentWindow!.focus();
-    iframe.contentWindow!.print();
-    URL.revokeObjectURL(url);
-    setTimeout(() => iframe.remove(), 3000);
+    // Petite pause pour laisser le script autofit se terminer dans l'iframe
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        style.remove();
+        iframe.remove();
+      }, 1000);
+    }, 150);
   };
 
-  document.body.appendChild(iframe);
-  iframe.src = url;
+  const doc = iframe.contentDocument!;
+  doc.open();
+  doc.write(html);
+  doc.close();
 }
