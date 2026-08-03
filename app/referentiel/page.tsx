@@ -224,7 +224,7 @@ export default function ReferentielPage() {
     </svg>
   );
 
-  const iconBtn = (handler: () => void, icon: React.ReactNode, hoverColor: string) => (
+  const iconBtn = (handler: (e: React.MouseEvent) => void, icon: React.ReactNode, hoverColor: string) => (
     <button onClick={handler} style={{ background: "none", border: "none", cursor: "pointer", color: "#94A3B8", padding: "2px 4px", borderRadius: 4 }}
       onMouseEnter={(e) => (e.currentTarget.style.color = hoverColor)}
       onMouseLeave={(e) => (e.currentTarget.style.color = "#94A3B8")}>
