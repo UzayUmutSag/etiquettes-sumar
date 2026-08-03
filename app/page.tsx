@@ -97,14 +97,11 @@ export default function Home() {
     setEtiquette({ ...sel, ...upper });
   };
 
-  const imprimer = async () => {
+  const imprimer = () => {
     if (!sel || !etiquette) return;
 
-    // Ouvrir avant le await pour rester dans le geste utilisateur (popup non bloqué)
-    const win = window.open("", "_blank", "width=400,height=700");
-    if (!win) return;
-
-    await fetch("/api/etiquettes", {
+    // Save en arrière-plan (pas besoin d'attendre pour imprimer)
+    fetch("/api/etiquettes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -122,7 +119,10 @@ export default function Home() {
         quantite: formData.quantite ? parseInt(formData.quantite) : null,
         observation: formData.observation || null,
       }),
-    });
+    }).catch(() => {});
+
+    const win = window.open("", "_blank", "width=400,height=700");
+    if (!win) return;
 
     const fmt = (d: string | null) =>
       d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";

@@ -151,14 +151,11 @@ export default function EtiqettesClientPage() {
 
   const generer = () => setShowPreview(true);
 
-  const imprimer = async () => {
+  const imprimer = () => {
     if (!sel) return;
 
-    // Ouvrir la fenêtre ICI, avant le await, pour rester dans le geste utilisateur
-    const win = window.open("", "_blank", "width=400,height=350");
-    if (!win) return;
-
-    await fetch("/api/etiquettes-client", {
+    // Save en arrière-plan (pas besoin d'attendre pour imprimer)
+    fetch("/api/etiquettes-client", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -167,7 +164,10 @@ export default function EtiqettesClientPage() {
         lignes: JSON.stringify(lignes),
         nbEtiquettes: lignes.reduce((s, l) => s + l.totalColis, 0),
       }),
-    });
+    }).catch(() => {});
+
+    const win = window.open("", "_blank", "width=400,height=350");
+    if (!win) return;
 
     const fontMain = '"Arial Black","Arial Bold",Arial,sans-serif';
     const fontBody = "Arial,sans-serif";
