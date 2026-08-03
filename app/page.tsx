@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { printViaIframe } from "@/lib/printFrame";
 import Link from "next/link";
 import FormulaireEtiquette from "@/components/FormulaireEtiquette";
 import EtiquettePreview from "@/components/EtiquettePreview";
@@ -121,9 +122,6 @@ export default function Home() {
       }),
     }).catch(() => {});
 
-    const win = window.open("", "_blank", "width=400,height=700");
-    if (!win) return;
-
     const fmt = (d: string | null) =>
       d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
     const up = (s: string) => (s || "—").toUpperCase();
@@ -210,9 +208,7 @@ export default function Home() {
       </div>
     </body></html>`;
 
-    win.document.write(html);
-    win.document.close();
-    win.onload = () => { win.focus(); win.print(); win.close(); };
+    printViaIframe(html, "75mm", "125mm");
   };
 
   return (

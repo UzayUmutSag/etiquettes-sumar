@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, type ReactNode, type CSSProperties } from "react";
+import { printViaIframe } from "@/lib/printFrame";
 import Link from "next/link";
 import EtiquetteClientPreview from "@/components/EtiquetteClientPreview";
 
@@ -166,9 +167,6 @@ export default function EtiqettesClientPage() {
       }),
     }).catch(() => {});
 
-    const win = window.open("", "_blank", "width=400,height=350");
-    if (!win) return;
-
     const fontMain = '"Arial Black","Arial Bold",Arial,sans-serif';
     const fontBody = "Arial,sans-serif";
 
@@ -297,9 +295,7 @@ export default function EtiqettesClientPage() {
       ${lignes.flatMap((ligne) => Array.from({ length: ligne.totalColis }, () => labelHtml(ligne))).join("")}
     </body></html>`;
 
-    win.document.write(html);
-    win.document.close();
-    win.onload = () => { win.focus(); win.print(); win.close(); };
+    printViaIframe(html, "75mm", "50mm");
   };
 
   return (
