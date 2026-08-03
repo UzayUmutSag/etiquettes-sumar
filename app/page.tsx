@@ -100,6 +100,10 @@ export default function Home() {
   const imprimer = async () => {
     if (!sel || !etiquette) return;
 
+    // Ouvrir avant le await pour rester dans le geste utilisateur (popup non bloqué)
+    const win = window.open("", "_blank", "width=400,height=700");
+    if (!win) return;
+
     await fetch("/api/etiquettes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -206,8 +210,6 @@ export default function Home() {
       </div>
     </body></html>`;
 
-    const win = window.open("", "_blank", "width=400,height=700");
-    if (!win) return;
     win.document.write(html);
     win.document.close();
     win.onload = () => { win.focus(); win.print(); win.close(); };
