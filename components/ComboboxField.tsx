@@ -65,9 +65,9 @@ export default function ComboboxField({
   return (
     <div style={{ position: "relative" }}>
       <label style={{
-        display: "block", fontSize: 11, fontWeight: 600, color: "#64748B",
-        marginBottom: 5, letterSpacing: "0.04em", textTransform: "uppercase",
         display: "flex", alignItems: "center", gap: 6,
+        fontSize: 11, fontWeight: 600, color: "#64748B",
+        marginBottom: 5, letterSpacing: "0.04em", textTransform: "uppercase",
       } as React.CSSProperties}>
         {label}
         {saving && (

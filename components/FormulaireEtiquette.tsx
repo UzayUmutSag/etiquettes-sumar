@@ -13,7 +13,9 @@ type Props = {
   onGenerer: () => void;
 };
 
-const AUTRES_GROUPES = [
+type ChampConfig = { label: string; field: keyof FormData; placeholder: string; type?: string; col2?: boolean };
+
+const AUTRES_GROUPES: { titre: string; icon: React.ReactNode; champs: ChampConfig[] }[] = [
   {
     titre: "Client",
     icon: (
