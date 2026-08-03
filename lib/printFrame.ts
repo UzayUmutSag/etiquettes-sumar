@@ -7,16 +7,18 @@ export function printViaIframe(html: string, pageWidth: string, pageHeight: stri
   style.textContent = `
     @media print {
       @page { size: ${pageWidth} ${pageHeight}; margin: 0; }
-      html, body { margin: 0 !important; padding: 0 !important; background: white !important; }
-      body > * { visibility: hidden !important; }
+      html, body {
+        margin: 0 !important; padding: 0 !important;
+        width: ${pageWidth} !important; height: ${pageHeight} !important;
+        overflow: hidden !important; background: white !important;
+      }
+      body > *:not(#_sumar_print_frame) { display: none !important; }
       #_sumar_print_frame {
-        visibility: visible !important;
+        display: block !important;
         position: fixed !important;
         left: 0 !important; top: 0 !important;
-        width: ${pageWidth} !important;
-        height: ${pageHeight} !important;
-        border: none !important;
-        overflow: hidden !important;
+        width: ${pageWidth} !important; height: ${pageHeight} !important;
+        border: none !important; overflow: hidden !important;
       }
     }
   `;
