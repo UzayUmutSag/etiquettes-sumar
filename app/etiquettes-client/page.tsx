@@ -232,10 +232,10 @@ export default function EtiqettesClientPage() {
       <meta charset="utf-8"/>
       <title>Étiquettes Client ${sel.numeroCommande}</title>
       <style>
-        @page { size: 75mm 50mm; margin: 0; }
+        @page { size: 70mm 50mm; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: ${fontBody}; color: #000; background: white; }
-        .wrap { width: 75mm; height: 50mm; border: 1.5px solid #000; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
+        .wrap { width: 70mm; height: 50mm; border: 1.5px solid #000; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
         /* Row 1 */
         .row1 { display: flex; border-bottom: 1.5px solid #000; flex: 1; }
         .r1-left { flex: 3; border-right: 1.5px solid #000; display: flex; align-items: center; overflow: hidden; flex-direction: ${logoData && logoOrientation === "horizontal" ? "column" : "row"}; ${logoData && logoOrientation === "horizontal" ? "justify-content: center;" : ""} }
@@ -295,7 +295,7 @@ export default function EtiqettesClientPage() {
       ${lignes.flatMap((ligne) => Array.from({ length: ligne.totalColis }, () => labelHtml(ligne))).join("")}
     </body></html>`;
 
-    printViaIframe(html, "75mm", "50mm");
+    printViaIframe(html, "70mm", "50mm");
   };
 
   return (

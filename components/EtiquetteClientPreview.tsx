@@ -66,12 +66,12 @@ function FitText({ text, maxPx, minPx, fontFamily, style }: {
 }
 
 export default function EtiquetteClientPreview({ data, nombreParColis, dateProduction, logoData, logoOrientation }: Props) {
-  const W = 283; // 75mm @ 96dpi
+  const W = 265; // 70mm @ 96dpi
   const H = 189; // 50mm @ 96dpi
   const B = "1.5px solid #000";
   const fontMain = '"Arial Black","Arial Bold",Arial,sans-serif';
   const fontBody = "Arial,sans-serif";
-  const pxNum = (mm: number) => Math.round((mm / 75) * W);
+  const pxNum = (mm: number) => Math.round((mm / 70) * W);
   const px = (mm: number) => `${pxNum(mm)}px`;
   const qte = nombreParColis ?? data.quantite;
 
