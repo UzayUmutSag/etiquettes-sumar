@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCommandes } from "@/lib/notion";
 
+export const revalidate = 60; // cache 60 secondes
+
 export async function GET() {
   try {
     const commandes = await getCommandes();
