@@ -345,9 +345,6 @@ export default function EtiqettesClientPage() {
           display: "flex", flexDirection: "column", flexShrink: 0,
         }}>
           <div style={{ padding: "14px 16px", borderBottom: "1px solid #F1F5F9" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#94A3B8", textTransform: "uppercase", marginBottom: 10 }}>
-              Étiquettes atelier (non livrées)
-            </div>
             <div style={{ position: "relative" }}>
               <svg style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#94A3B8" }}
                 width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
