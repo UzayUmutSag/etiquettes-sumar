@@ -78,17 +78,20 @@ export default function EtiqettesClientPage() {
 
   useEffect(() => {
     setDateProduction(new Date().toISOString().slice(0, 10));
-    // Croise les étiquettes locales avec les commandes Notion "Affichage atelier"
-    Promise.all([
-      fetch("/api/etiquettes").then((r) => r.json()),
-      fetch("/api/commandes").then((r) => r.json()),
-    ])
-      .then(([etiquettes, commandes]) => {
-        if (!Array.isArray(etiquettes) || !Array.isArray(commandes)) return;
-        const notionIds = new Set(commandes.map((c: { id: string }) => c.id));
-        setEtiquettes(etiquettes.filter((e) => notionIds.has(e.notionCommandeId)));
-      })
+    // Étape 1 : charge les étiquettes BDD immédiatement (rapide)
+    fetch("/api/etiquettes")
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setEtiquettes(data); })
       .finally(() => setLoading(false));
+    // Étape 2 : filtre par Notion "Affichage atelier" en arrière-plan
+    fetch("/api/commandes")
+      .then((r) => r.json())
+      .then((commandes) => {
+        if (!Array.isArray(commandes)) return;
+        const notionIds = new Set(commandes.map((c: { id: string }) => c.id));
+        setEtiquettes((prev) => prev.filter((e) => notionIds.has(e.notionCommandeId)));
+      })
+      .catch(() => {});
     fetch("/api/referentiel/clients")
       .then((r) => r.json())
       .then((clients: { nomClient: string; logoData: string | null }[]) => {
