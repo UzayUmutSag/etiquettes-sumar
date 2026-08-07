@@ -84,16 +84,20 @@ export async function getCommandes(): Promise<CommandeNotion[]> {
   const response = await ds.query({
     data_source_id: DATA_SOURCE_ID,
     page_size: 100,
-    filter: {
-      property: "Avancement",
-      status: { does_not_equal: "Livré" },
-    },
   });
 
-  const pages = response.results.filter(
+  const allPages = response.results.filter(
     (page): page is { id: string; object: string; properties: Record<string, unknown> } =>
       typeof page === "object" && page !== null && (page as { object: string }).object === "page"
   );
+
+  // Filtre "Affichage atelier" : Réception non vide + Avancement hors Emballé/Livré/Prêt à partir/Abandonné
+  const EXCLUDED_AVANCEMENT = ["Emballé", "Livré", "Prêt à partir", "Abandonné"];
+  const pages = allPages.filter((page) => {
+    const props = page.properties;
+    if (!getDate(props["Réception"])) return false;
+    return !EXCLUDED_AVANCEMENT.includes(getStatus(props["Avancement"]));
+  });
 
   // Récupère les noms des clients (relations) en parallèle
   const clientIds = pages.flatMap((p) => getRelationIds(p.properties["Client"]));

@@ -78,12 +78,15 @@ export default function EtiqettesClientPage() {
 
   useEffect(() => {
     setDateProduction(new Date().toISOString().slice(0, 10));
-    fetch("/api/etiquettes")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setEtiquettes(data.filter((e) => e.avancement?.toLowerCase() !== "livré"));
-        }
+    // Croise les étiquettes locales avec les commandes Notion "Affichage atelier"
+    Promise.all([
+      fetch("/api/etiquettes").then((r) => r.json()),
+      fetch("/api/commandes").then((r) => r.json()),
+    ])
+      .then(([etiquettes, commandes]) => {
+        if (!Array.isArray(etiquettes) || !Array.isArray(commandes)) return;
+        const notionIds = new Set(commandes.map((c: { id: string }) => c.id));
+        setEtiquettes(etiquettes.filter((e) => notionIds.has(e.notionCommandeId)));
       })
       .finally(() => setLoading(false));
     fetch("/api/referentiel/clients")
