@@ -34,8 +34,9 @@ export function printViaIframe(html: string, pageWidth: string, pageHeight: stri
   iframe.onload = () => {
     const iDoc = iframe.contentDocument;
     if (iDoc) {
-      iDoc.documentElement.style.overflow = "hidden";
-      iDoc.body.style.overflow = "hidden";
+      const noScroll = iDoc.createElement("style");
+      noScroll.textContent = `::-webkit-scrollbar{display:none!important}html,body{scrollbar-width:none;overflow-x:hidden}`;
+      iDoc.head.appendChild(noScroll);
     }
     setTimeout(() => {
       window.print();
