@@ -7,7 +7,7 @@ const formatClient = (name: string) => name.replace(/_/g, " ").toUpperCase();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ds = (notion as any).dataSources as {
-  query: (p: { data_source_id: string; page_size?: number; filter?: unknown }) => Promise<{ results: unknown[] }>;
+  query: (p: { data_source_id: string; page_size?: number; filter?: unknown; start_cursor?: string }) => Promise<{ results: unknown[]; has_more?: boolean; next_cursor?: string | null }>;
 };
 
 export type CommandeNotion = {
@@ -81,12 +81,20 @@ async function getPageTitle(pageId: string): Promise<string> {
 }
 
 export async function getCommandes(): Promise<CommandeNotion[]> {
-  const response = await ds.query({
-    data_source_id: DATA_SOURCE_ID,
-    page_size: 100,
-  });
+  // Pagine jusqu'à récupérer toutes les commandes (pas limité à 100)
+  let allResults: unknown[] = [];
+  let cursor: string | undefined = undefined;
+  do {
+    const response = await ds.query({
+      data_source_id: DATA_SOURCE_ID,
+      page_size: 100,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    allResults = [...allResults, ...response.results];
+    cursor = response.has_more && response.next_cursor ? response.next_cursor : undefined;
+  } while (cursor);
 
-  const allPages = response.results.filter(
+  const allPages = allResults.filter(
     (page): page is { id: string; object: string; properties: Record<string, unknown> } =>
       typeof page === "object" && page !== null && (page as { object: string }).object === "page"
   );
