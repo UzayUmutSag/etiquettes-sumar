@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-import { getCommandes } from "@/lib/notion";
-
-export const revalidate = 60; // cache 60 secondes
+import { getCachedCommandes } from "@/lib/notion";
 
 export async function GET() {
   try {
-    const commandes = await getCommandes();
+    const commandes = await getCachedCommandes();
     return NextResponse.json(commandes);
   } catch (error) {
     console.error("Erreur Notion:", error);

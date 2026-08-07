@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { Client } from "@notionhq/client";
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
@@ -133,3 +134,10 @@ export async function getCommandes(): Promise<CommandeNotion[]> {
     };
   });
 }
+
+// Résultat mis en cache 60s côté serveur (partagé entre les routes)
+export const getCachedCommandes = unstable_cache(
+  () => getCommandes(),
+  ["commandes-affichage-atelier"],
+  { revalidate: 60 }
+);

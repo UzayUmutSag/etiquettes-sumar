@@ -78,20 +78,10 @@ export default function EtiqettesClientPage() {
 
   useEffect(() => {
     setDateProduction(new Date().toISOString().slice(0, 10));
-    // Étape 1 : charge les étiquettes BDD immédiatement (rapide)
     fetch("/api/etiquettes")
       .then((r) => r.json())
       .then((data) => { if (Array.isArray(data)) setEtiquettes(data); })
       .finally(() => setLoading(false));
-    // Étape 2 : filtre par Notion "Affichage atelier" en arrière-plan
-    fetch("/api/commandes")
-      .then((r) => r.json())
-      .then((commandes) => {
-        if (!Array.isArray(commandes)) return;
-        const notionIds = new Set(commandes.map((c: { id: string }) => c.id));
-        setEtiquettes((prev) => prev.filter((e) => notionIds.has(e.notionCommandeId)));
-      })
-      .catch(() => {});
     fetch("/api/referentiel/clients")
       .then((r) => r.json())
       .then((clients: { nomClient: string; logoData: string | null }[]) => {
@@ -334,7 +324,7 @@ export default function EtiqettesClientPage() {
             <div style={{ color: "white", fontWeight: 700, fontSize: 15, letterSpacing: "-0.01em" }}>
               Étiquettes Client
             </div>
-            <div style={{ color: "#94A3B8", fontSize: 11 }}>75 × 50 mm · Sumar.F</div>
+            <div style={{ color: "#94A3B8", fontSize: 11 }}>70 × 50 mm · Sumar.F</div>
           </div>
         </div>
 
@@ -612,7 +602,7 @@ export default function EtiqettesClientPage() {
         }}>
           <div style={{ padding: "16px 20px", borderBottom: "1px solid #E2E8F0", background: "white" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#1E2640" }}>Aperçu étiquette client</div>
-            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>75 × 50 mm</div>
+            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>70 × 50 mm</div>
           </div>
           <div style={{
             flex: 1, overflowY: "auto", display: "flex", alignItems: "flex-start",

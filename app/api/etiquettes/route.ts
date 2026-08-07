@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCachedCommandes } from "@/lib/notion";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,8 +18,17 @@ export async function GET() {
     const etiquettes = await prisma.etiquetteAtelier.findMany({
       orderBy: { creeLe: "desc" },
     });
-    return NextResponse.json(etiquettes);
+    try {
+      const commandes = await getCachedCommandes();
+      const notionIds = new Set(commandes.map((c) => c.id));
+      const filtered = etiquettes.filter((e) => notionIds.has(e.notionCommandeId));
+      return NextResponse.json(filtered);
+    } catch {
+      // Si Notion échoue, retourner toutes les étiquettes sans filtre
+      return NextResponse.json(etiquettes);
+    }
   } catch (error) {
+    console.error("Erreur récupération étiquettes:", error);
     return NextResponse.json({ error: "Erreur" }, { status: 500 });
   }
 }
