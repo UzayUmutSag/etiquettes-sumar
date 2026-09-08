@@ -78,10 +78,19 @@ export default function EtiqettesClientPage() {
 
   useEffect(() => {
     setDateProduction(new Date().toISOString().slice(0, 10));
-    fetch("/api/etiquettes")
-      .then((r) => r.json())
-      .then((data) => { if (Array.isArray(data)) setEtiquettes(data); })
-      .finally(() => setLoading(false));
+    Promise.all([
+      fetch("/api/etiquettes").then((r) => r.json()),
+      fetch("/api/commandes").then((r) => r.json()).catch(() => null),
+    ]).then(([data, commandes]) => {
+      if (!Array.isArray(data)) return;
+      if (Array.isArray(commandes)) {
+        const notionIds = new Set(commandes.map((c: { id: string }) => c.id));
+        setEtiquettes(data.filter((e) => notionIds.has(e.notionCommandeId)));
+      } else {
+        // Si Notion échoue, afficher toutes les étiquettes sans filtre
+        setEtiquettes(data);
+      }
+    }).finally(() => setLoading(false));
     fetch("/api/referentiel/clients")
       .then((r) => r.json())
       .then((clients: { nomClient: string; logoData: string | null }[]) => {
