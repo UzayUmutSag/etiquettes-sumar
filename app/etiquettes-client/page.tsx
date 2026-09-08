@@ -84,8 +84,8 @@ export default function EtiqettesClientPage() {
     ]).then(([data, commandes]) => {
       if (!Array.isArray(data)) return;
       if (Array.isArray(commandes)) {
-        const notionIds = new Set(commandes.map((c: { id: string }) => c.id));
-        setEtiquettes(data.filter((e) => notionIds.has(e.notionCommandeId)));
+        const notionNums = new Set(commandes.map((c: { numeroCommande: string }) => c.numeroCommande));
+        setEtiquettes(data.filter((e) => notionNums.has(e.numeroCommande)));
       } else {
         // Si Notion échoue, afficher toutes les étiquettes sans filtre
         setEtiquettes(data);
